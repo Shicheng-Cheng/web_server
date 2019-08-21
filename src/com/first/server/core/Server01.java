@@ -62,6 +62,7 @@ public class Server01 {
 			System.out.println("客户端开始连接");
 			//获取请求协议
 			InputStream inputStream =socket.getInputStream();
+			//逐个字节进行读取
 			byte[] data=new byte[1024];
 			int len=inputStream.read(data);
 			String requeString=new String(data,0,len);
