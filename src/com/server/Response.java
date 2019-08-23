@@ -12,7 +12,7 @@ import java.util.Date;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 
-public class response {
+public class Response {
 	private BufferedWriter bwBufferedWriter;
 	// 正文
 	private StringBuilder contentBuilder;// 正文信息
@@ -21,39 +21,53 @@ public class response {
 	private final String BLANK = " ";
 	private final String CRLF = "\r\n";
 
-	public response() {
+	public Response() {
 		contentBuilder = new StringBuilder();
 		headinfoBuilder = new StringBuilder();
 		len = 0;
 
 	}
 
-	public response(Socket socket) {
+	public Response(Socket socket) {
 		this();
 		try {
 			bwBufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			headinfoBuilder = null;
 		}
 
 	}
 
-	public response(OutputStream os) {
+	public Response(OutputStream os) {
 		this();
 		bwBufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
 	}
 
 //动态添加内容
-	public response print(String info) {
+	public Response print(String info) {
 		contentBuilder.append(info);
-		len+=info.getBytes().length;
+		len += info.getBytes().length;
 		return this;
 	}
-	public response println(String info) {
+
+	public Response println(String info) {
 		contentBuilder.append(info).append(CRLF);
-		len+=(info+CRLF).getBytes().length;
+		len += (info + CRLF).getBytes().length;
 		return this;
+	}
+
+	// 推送响应信息
+	public void pushToBrowser(int code) throws IOException {
+		createInfo(code);
+		if (null == headinfoBuilder) {
+			code=505;
+		}
+			bwBufferedWriter.append(headinfoBuilder);
+		bwBufferedWriter.append(contentBuilder);
+		bwBufferedWriter.flush();
+
 	}
 
 	private void createInfo(int code) {

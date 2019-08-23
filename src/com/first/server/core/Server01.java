@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Date;
 
 import com.first.server.util.Logger;
+import com.server.Response;
 
 public class Server01 {
 	private static ServerSocket serversocket;
@@ -67,31 +68,16 @@ public class Server01 {
 			int len=inputStream.read(data);
 			String requeString=new String(data,0,len);
 			System.out.println(requeString);
-			StringBuilder stringBuilder=new StringBuilder();
-			stringBuilder.append("<html>");
-			stringBuilder.append("<title>");
-			stringBuilder.append("login");
-			stringBuilder.append("</title>");
-			stringBuilder.append("<body>");
-			stringBuilder.append("页面内容");
-			stringBuilder.append("</body>");
-			stringBuilder.append("</html>");
-			int size=stringBuilder.length();
-			StringBuilder responseBuilder=new StringBuilder();
-			String blank=" ";
-			String CRLF ="\r\n";
-			responseBuilder.append("HTTP/1.1").append(blank);
-			responseBuilder.append(200).append(blank);
-			responseBuilder.append("OK").append(CRLF);
-			responseBuilder.append("Date:").append(new Date()).append(CRLF);
-			responseBuilder.append("Server:").append("");
-			responseBuilder.append("Content-type:text/html").append(CRLF);
-			responseBuilder.append("Content-length:").append(size).append(CRLF);
-			responseBuilder.append(CRLF);
-			socket.getOutputStream();
-			BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			bw.write(responseBuilder.toString());
-			bw.flush();
+			Response response=new Response(socket);		
+			response.print("<html>");
+			response.print("<title>");
+			response.print("服务器响应成功");
+			response.print("</title>");
+			response.print("<body>");
+			response.print("DIY SERVER");
+			response.print("</body>");
+			response.print("</html>");
+			response.pushToBrowser(200);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
