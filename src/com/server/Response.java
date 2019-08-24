@@ -62,9 +62,9 @@ public class Response {
 	public void pushToBrowser(int code) throws IOException {
 		createInfo(code);
 		if (null == headinfoBuilder) {
-			code=505;
+			code = 505;
 		}
-			bwBufferedWriter.append(headinfoBuilder);
+		bwBufferedWriter.append(headinfoBuilder);
 		bwBufferedWriter.append(contentBuilder);
 		bwBufferedWriter.flush();
 

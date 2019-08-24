@@ -31,7 +31,8 @@ public class Server01 {
 			serversocket=new ServerSocket(port);
 			long end=System.currentTimeMillis();
 			Logger.log("开始启动"+(end-start)+"ms");
-			socket=serversocket.accept();
+			receive();
+		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,37 +47,27 @@ public class Server01 {
 					e.printStackTrace();
 				}
 			}
-			if(socket!=null) {
-				try {
-					socket.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 		}
 	//接收连接
-	public void receive() {
+	public static void receive() {
 		try {
 			Socket socket=serversocket.accept();
 			System.out.println("客户端开始连接");
 			//获取请求协议
-			InputStream inputStream =socket.getInputStream();
-			//逐个字节进行读取
-			byte[] data=new byte[1024];
-			int len=inputStream.read(data);
-			String requeString=new String(data,0,len);
-			System.out.println(requeString);
-			Response response=new Response(socket);		
-			response.print("<html>");
-			response.print("<title>");
-			response.print("服务器响应成功");
-			response.print("</title>");
-			response.print("<body>");
-			response.print("DIY SERVER");
-			response.print("</body>");
-			response.print("</html>");
+			Request request=new Request(socket);
+			Response response=new Response(socket);	
+			Servlet servlet=null;
+//			Servlet servlet=new RegisterServlet();
+			System.out.println("***");
+			System.out.println(request.getUrl());
+			if(request.getUrl().trim().equals("login")) {
+				servlet=new LoginServlet();
+			}
+			else if(request.getUrl().trim().equals("reg"))
+				{					servlet=new RegisterServlet();
+				}
+			servlet.service(request, response);
 			response.pushToBrowser(200);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
